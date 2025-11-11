@@ -80,11 +80,25 @@
         .option:nth-child(3) { background-color: #D89E00; } /* Gelb */
         .option:nth-child(4) { background-color: #26890C; } /* Grün */
 
-        /* KLASSE FÜR DIE LÖSUNGS-Hervorhebung */
-        .solution {
-            border: 8px solid #00FF00; 
-            box-shadow: 0 0 30px #00FF00, inset 0 0 10px rgba(0, 255, 0, 0.5); 
-            padding: 22px; 
+        /* KLASSEN FÜR LÖSUNGS-FEEDBACK */
+        .correct-answer {
+            background-color: #10B981 !important; /* Grüner bei Korrekt */
+            border: 5px solid #065F46;
+            box-shadow: 0 0 15px #10B981;
+            transform: scale(1.05);
+            cursor: default;
+        }
+
+        .incorrect-answer {
+            background-color: #EF4444 !important; /* Roter bei Falsch */
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .disabled-option {
+            pointer-events: none; /* Deaktiviert alle Klicks */
+            cursor: default;
+            opacity: 0.8;
         }
 
         /* Hinweis-Text */
@@ -134,16 +148,14 @@
 <body>
 
     <div class="quiz-container">
-        <!-- Lade-Status oder Frage wird hier angezeigt -->
         <h1 id="question-text" class="question">Warte auf Firebase-Verbindung...</h1>
         
         <div id="loader" class="loader hidden"></div>
         
         <div id="options-grid" class="options-grid">
-            <!-- Antworten werden von JS eingefügt -->
-        </div>
+            </div>
         
-        <p class="hint" id="hint-text">Drücke die **Leertaste** (Space), um die **Lösung** anzuzeigen!</p>
+        <p class="hint" id="hint-text">Wähle eine Antwort oder drücke die **Leertaste** (Space), um die **Lösung** anzuzeigen.</p>
         
         <button id="next-button" class="hidden">
             <i class="fas fa-chevron-right"></i> Nächste Frage
@@ -174,7 +186,7 @@
         }
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
-        // Die vom Benutzer bereitgestellte Konfiguration
+        // Die vom Benutzer bereitgestellte Konfiguration (HAT JETZT PRIORITÄT)
         const userConfig = {
             apiKey: "AIzaSyDT-XYS_Q19WVI0sqZf49JNptXsX8OEX_c",
             authDomain: "quiz-weihnachtsbasar.firebaseapp.com",
@@ -185,7 +197,7 @@
             measurementId: "G-173BQZWGDC"
         };
 
-        // Kombiniere die userConfig mit der Canvas-Konfiguration (falls vorhanden)
+        // Kombiniere die Canvas-Konfiguration mit der userConfig, wobei userConfig gewinnt
         const firebaseConfig = { ...initialFirebaseConfig, ...userConfig };
 
         // Firebase initialisieren
@@ -221,27 +233,31 @@
                 loadNextQuestion(); // Starte mit der ersten Frage
             } catch (error) {
                 console.error("Firebase Auth Fehler:", error);
-                questionElement.textContent = "Fehler bei der Anmeldung: Bitte Firebase-Regeln prüfen oder Adblocker deaktivieren.";
+                // Zeigt eine spezifischere Fehlermeldung
+                questionElement.textContent = "Fehler: App-Start fehlgeschlagen. Datenbank-Pfad oder Firebase-Regeln prüfen.";
                 hideLoader();
             }
         }
 
         /**
          * Ruft ALLE Quizfragen von Firebase ab und speichert sie global.
-         * Verwendet getDocs, um nur einmal abzurufen (keine dauerhafte Listen-Verbindung).
          */
         async function fetchAllQuestions() {
             showLoader("Datenbank wird verbunden...");
-            const collectionPath = `artifacts/${appId}/public/data/quizfragen`; 
+            
+            // WORKAROUND: Direkter Zugriff auf 'quizfragen' Collection (funktioniert mit lockeren Regeln)
+            const collectionPath = `quizfragen`; 
+            
+            console.log(`Suche Fragen im Pfad: ${collectionPath}`); // Loggt den Pfad
 
             try {
-                // Einmaliger Abruf der Dokumente (Query Snapshot)
                 const querySnapshot = await getDocs(collection(db, collectionPath));
                 
                 allQuestions = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.frage && data.antworten && typeof data.korrekterIndex === 'number') {
+                    // Zusätzliche Prüfungen auf die korrekten Datentypen
+                    if (data.frage && Array.isArray(data.antworten) && typeof data.korrekterIndex === 'number') {
                         allQuestions.push(data);
                     }
                 });
@@ -254,8 +270,7 @@
 
             } catch (e) {
                 console.error("Fehler beim Abrufen der Fragen:", e);
-                questionElement.textContent = `Fehler beim Laden der Fragen: ${e.message}`;
-                hideLoader();
+                // Leite den Fehler weiter, um ihn in authenticateAndStart zu behandeln
                 throw e; 
             }
         }
@@ -276,7 +291,7 @@
             solutionShown = false;
             hideNextButton();
             optionsGrid.innerHTML = ''; // Optionen leeren
-            hintText.textContent = "Drücke die **Leertaste** (Space), um die **Lösung** anzuzeigen!";
+            hintText.textContent = "Wähle eine Antwort oder drücke die **Leertaste** (Space), um die **Lösung** anzuzeigen.";
 
             // 2. Zufällige Frage wählen
             const randomIndex = Math.floor(Math.random() * allQuestions.length);
@@ -290,6 +305,37 @@
         // =================================================================
         // 3. UI LOGIK & EVENTS
         // =================================================================
+
+        /**
+         * Behandelt den Klick auf eine Antwort-Option.
+         */
+        function handleOptionClick(event) {
+            if (solutionShown) return; // Ignoriere Klicks, wenn die Lösung schon gezeigt wurde
+
+            const clickedOption = event.target;
+            const isCorrect = clickedOption.getAttribute('data-correct') === 'true';
+
+            // Zeige Feedback für die gewählte Option
+            if (isCorrect) {
+                clickedOption.classList.add('correct-answer');
+                hintText.textContent = "Richtig! Gut gemacht!";
+            } else {
+                clickedOption.classList.add('incorrect-answer');
+                hintText.textContent = "Falsch. Die richtige Antwort ist nun grün markiert.";
+                
+                // Markiere die korrekte Antwort
+                const correctOption = document.querySelector('[data-correct="true"]');
+                if (correctOption) {
+                    correctOption.classList.add('correct-answer');
+                }
+            }
+
+            // Deaktiviere alle Antwortfelder und zeige den Weiter-Button
+            solutionShown = true;
+            disableOptions();
+            showNextButton();
+        }
+
 
         /**
          * Aktualisiert die HTML-Elemente mit den Daten der geladenen Frage.
@@ -311,6 +357,9 @@
                     optionDiv.setAttribute('data-correct', 'true');
                 }
                 
+                // Füge den Klick-Listener hinzu
+                optionDiv.addEventListener('click', handleOptionClick);
+                
                 optionsGrid.appendChild(optionDiv);
             });
             
@@ -318,7 +367,7 @@
         }
 
         /**
-         * Zeigt die korrekte Lösung an und den "Nächste Frage"-Button.
+         * Zeigt die korrekte Lösung an (wird durch Leertaste ausgelöst)
          */
         function showSolution() {
             if (solutionShown) return;
@@ -328,13 +377,25 @@
             const correctOption = document.querySelector('[data-correct="true"]');
             
             if (correctOption) {
-                correctOption.classList.add('solution');
+                correctOption.classList.add('correct-answer');
             }
-            
+
             hintText.textContent = "Drücke **Enter**, um die nächste Frage zu laden.";
+            disableOptions();
             showNextButton();
         }
         
+        /**
+         * Deaktiviert Klick-Events auf allen Optionen.
+         */
+        function disableOptions() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.add('disabled-option');
+            });
+        }
+
+
         function showLoader(text) {
             questionElement.textContent = text;
             loader.classList.remove('hidden');
@@ -363,7 +424,7 @@
             if (!currentQuizData) return;
             
             // 1. Leertaste: Lösung anzeigen
-            if ((event.key === ' ' || event.keyCode === 32)) {
+            if ((event.key === ' ' || event.keyCode === 32) && !solutionShown) {
                 event.preventDefault(); // Verhindert Scrollen
                 showSolution();
             }
