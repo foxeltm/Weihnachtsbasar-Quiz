@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 Weihnachtsbasar Quiz Lokal</title>
+    <title>🎄 Weihnachtsbasar Quiz (50 Fragen)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -46,6 +46,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            text-align: center;
         }
 
         /* Grid für die Antworten */
@@ -148,34 +149,259 @@
 
     <script>
         // =================================================================
-        // 1. LOKALE QUIZFRAGEN (KEIN FIREBASE MEHR!)
-        // Sie können diese Liste beliebig erweitern.
+        // 1. LOKALE QUIZFRAGEN (50 Fragen aus der Datei "Fragen.txt")
+        // Die korrekten Indizes: A=0, B=1, C=2, D=3
         // =================================================================
         const allQuestions = [
             {
-                frage: "In welchem Land hat der Weihnachtsmann seinen offiziellen Wohnsitz?",
-                antworten: ["USA (Alaska)", "Finnland (Rovaniemi)", "Kanada (Nordpol)", "Grönland (Nuuk)"],
+                frage: "Welches Land gilt als Ursprung des Weihnachtsbaums?",
+                antworten: ["Italien", "Deutschland", "England", "Frankreich"],
                 korrekterIndex: 1
             },
             {
-                frage: "Welches Gewürz ist Hauptbestandteil von Glühwein und Lebkuchen?",
-                antworten: ["Basilikum", "Zimt", "Oregano", "Kardamom"],
+                frage: "Wer schrieb das Lied „Stille Nacht, heilige Nacht“?",
+                antworten: ["Franz Xaver Gruber", "Joseph Mohr", "Johannes Daniel Falk", "Adolphe Adam"],
                 korrekterIndex: 1
             },
             {
-                frage: "Wer schrieb das berühmte Weihnachtslied 'Stille Nacht, heilige Nacht'?",
-                antworten: ["Johann Sebastian Bach", "Joseph Mohr und Franz Gruber", "Ludwig van Beethoven", "Wolfgang Amadeus Mozart"],
-                korrekterIndex: 1
+                frage: "Welches Getränk ist traditionell auf deutschen Weihnachtsmärkten beliebt?",
+                antworten: ["Glühwein", "Bier", "Kakao", "Apfelsaft"],
+                korrekterIndex: 0
             },
             {
-                frage: "Welche Farbe hatte das Gewand des Heiligen Nikolaus ursprünglich?",
-                antworten: ["Rot", "Blau", "Grün", "Weiß"],
+                frage: "Welches Tier zieht laut Legende den Schlitten des Weihnachtsmanns?",
+                antworten: ["Pferde", "Hunde", "Rentiere", "Esel"],
+                korrekterIndex: 2
+            },
+            {
+                frage: "Wann feiern orthodoxe Christen Weihnachten?",
+                antworten: ["24. Dezember", "25. Dezember", "6. Januar", "7. Januar"],
                 korrekterIndex: 3
             },
             {
-                frage: "Welcher Baum wird in Deutschland am häufigsten als Weihnachtsbaum verwendet?",
-                antworten: ["Fichte", "Kiefer", "Nordmanntanne", "Eiche"],
+                frage: "Was stellt man traditionell am 6. Dezember vor die Tür?",
+                antworten: ["Nikolausstiefel", "Socken", "Mützen", "Handschuhe"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Farbe hat der Mantel des klassischen Weihnachtsmanns?",
+                antworten: ["Blau", "Grün", "Rot", "Weiß"],
                 korrekterIndex: 2
+            },
+            {
+                frage: "Welches Gebäck wird oft in Sternform gebacken?",
+                antworten: ["Lebkuchen", "Zimtsterne", "Vanillekipferl", "Spekulatius"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Figur bringt in Italien die Geschenke zu Weihnachten?",
+                antworten: ["Santa Claus", "La Befana", "Nikolaus", "Christkind"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Wie viele Adventssonntage gibt es traditionell?",
+                antworten: ["Drei", "Vier", "Fünf", "Sechs"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Pflanze wird oft zu Weihnachten als Dekoration aufgehängt?",
+                antworten: ["Tannenzweige", "Misteln", "Rosen", "Stechpalmen"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Stadt gilt als Ursprungsort des Liedes „Stille Nacht“?",
+                antworten: ["Oberndorf bei Salzburg", "Wien", "München", "Salzburg"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welches traditionelle Gebäck wird in Polen an Weihnachten gegessen?",
+                antworten: ["Makowiec", "Stollen", "Panettone", "Lebkuchen"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Wer verfasste das Gedicht „A Visit from St. Nicholas“?",
+                antworten: ["Clement Clarke Moore", "Washington Irving", "Charles Dickens", "Hans Christian Andersen"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Farbe hatten die ursprünglichen Weihnachtskugeln in Deutschland?",
+                antworten: ["Gold", "Rot", "Grün", "Silber"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Pflanze ist in England traditionell mit Küssen verbunden?",
+                antworten: ["Misteln", "Stechpalmen", "Tannenzweige", "Rosmarin"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Wer schrieb das Weihnachtslied „Leise rieselt der Schnee“?",
+                antworten: ["Eduard Ebel", "Franz Xaver Gruber", "Joseph Mohr", "Johannes Daniel Falk"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welches europäische Land ist für den Brauch des Krampus bekannt?",
+                antworten: ["Österreich", "Schweiz", "Deutschland", "Italien"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welches Gewürz wird traditionell in dänischem Gløgg verwendet?",
+                antworten: ["Kardamom", "Zimt", "Nelken", "Ingwer"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "In welchem Jahrhundert entstand der Weihnachtsbaumbrauch?",
+                antworten: ["14. Jahrhundert", "15. Jahrhundert", "16. Jahrhundert", "17. Jahrhundert"],
+                korrekterIndex: 2
+            },
+            {
+                frage: "Welches Getränk gehört in den traditionellen britischen Christmas Pudding?",
+                antworten: ["Rotwein", "Rum", "Apfelsaft", "Bier"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Figur bringt in Deutschland Geschenke an Heiligabend?",
+                antworten: ["Weihnachtsmann", "Christkind", "Nikolaus", "Julbock"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Frucht wird häufig in Christstollen verarbeitet?",
+                antworten: ["Orangen", "Rosinen", "Äpfel", "Kirschen"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welches Land ist bekannt für den Brauch, am Heiligen Abend ein Feuer anzuzünden?",
+                antworten: ["Schweden", "Norwegen", "Finnland", "Island"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Wer komponierte die Musik zu „O du fröhliche“?",
+                antworten: ["Franz Xaver Gruber", "Johannes Daniel Falk", "Adolphe Adam", "Joseph Mohr"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welches Gebäck ist in Österreich traditionell zu Weihnachten beliebt?",
+                antworten: ["Lebkuchen", "Vanillekipferl", "Panettone", "Makowiec"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Kerzen brennt man traditionell am Adventskranz?",
+                antworten: ["Teelichter", "Adventskerzen", "Baumkerzen", "Streichhölzer"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Figur erscheint am Nikolaustag in manchen Regionen Deutschlands mit Rute?",
+                antworten: ["Knecht Ruprecht", "Weihnachtsmann", "Christkind", "Julbock"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welches Land feiert Weihnachten traditionell am 7. Januar?",
+                antworten: ["Griechenland", "Russland", "Italien", "England"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welche Farbe hat das klassische Christkind in Darstellungen?",
+                antworten: ["Blau", "Rot", "Weiß", "Grün"],
+                korrekterIndex: 2
+            },
+            {
+                frage: "Welche Pflanze wird oft als Kranz zu Advent dekoriert?",
+                antworten: ["Tannenzweige", "Misteln", "Stechpalmen", "Rosmarin"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Süßigkeit hängt man traditionell in den Weihnachtsbaum?",
+                antworten: ["Bonbons", "Schokolade", "Lebkuchen", "Marzipan"],
+                korrekterIndex: 2
+            },
+            {
+                frage: "In welchem Land bringt das Christkind traditionell die Geschenke?",
+                antworten: ["Deutschland", "Frankreich", "Spanien", "England"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Pflanze wird in Skandinavien zu Weihnachten oft als Dekoration genutzt?",
+                antworten: ["Misteln", "Stechpalmen", "Tannenzweige", "Rosen"],
+                korrekterIndex: 2
+            },
+            {
+                frage: "Welches Weihnachtslied beginnt mit „Oh Tannenbaum, oh Tannenbaum“?",
+                antworten: ["Leise rieselt der Schnee", "Oh Tannenbaum", "Stille Nacht", "Morgen, Kinder, wird’s was geben"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welches Land ist für die Weihnachtshexe „La Befana“ bekannt?",
+                antworten: ["Spanien", "Italien", "Frankreich", "Deutschland"],
+                korrekterIndex: 1
+            },
+            {
+                frage: "Welches traditionelle Weihnachtsgebäck stammt aus Deutschland?",
+                antworten: ["Stollen", "Panettone", "Makowiec", "Vanillekipferl"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Wer schrieb das Gedicht „A Visit from St. Nicholas“?",
+                antworten: ["Clement Clarke Moore", "Charles Dickens", "Hans Christian Andersen", "Washington Irving"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Kerzenfarbe wird traditionell in Schweden für Lucia genutzt?",
+                antworten: ["Weiß", "Rot", "Gelb", "Grün"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Zutaten gehören klassisch in Glühwein?",
+                antworten: ["Rotwein, Zucker, Gewürze", "Apfelsaft, Honig, Zimt", "Bier, Zucker, Nelken", "Rotwein, Milch, Schokolade"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welches Tier ist Symbol für Weihnachten in manchen Ländern Europas?",
+                antworten: ["Rentier", "Pferd", "Hund", "Esel"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Farbe hat traditionell ein Adventskalender?",
+                antworten: ["Rot oder bunt", "Blau", "Grün", "Schwarz"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Frucht ist oft Bestandteil eines englischen Christmas Pudding?",
+                antworten: ["Rosinen", "Äpfel", "Kirschen", "Pflaumen"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "In welchem Land gilt der Weihnachtsmann als „Santa Claus“?",
+                antworten: ["USA", "Kanada", "England", "Deutschland"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welches traditionelle deutsche Weihnachtsgebäck ist oft länglich und mit Trockenfrüchten gefüllt?",
+                antworten: ["Stollen", "Panettone", "Lebkuchen", "Vanillekipferl"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Wer komponierte die Musik zu „O du fröhliche“?",
+                antworten: ["Johannes Daniel Falk", "Franz Xaver Gruber", "Joseph Mohr", "Adolphe Adam"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Figur bringt in manchen Regionen Österreichs Geschenke?",
+                antworten: ["Krampus", "Weihnachtsmann", "Christkind", "Nikolaus"],
+                korrekterIndex: 2
+            },
+            {
+                frage: "Welche Zutat gehört traditionell in den österreichischen Vanillekipferl-Teig?",
+                antworten: ["Mandeln", "Walnüsse", "Haselnüsse", "Pistazien"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welches Lied beginnt mit „Leise rieselt der Schnee“?",
+                antworten: ["Leise rieselt der Schnee", "Oh Tannenbaum", "Morgen, Kinder, wird’s was geben", "Stille Nacht"],
+                korrekterIndex: 0
+            },
+            {
+                frage: "Welche Figur ist in Italien am 6. Januar aktiv und bringt Süßigkeiten für Kinder?",
+                antworten: ["La Befana", "Weihnachtsmann", "Christkind", "Nikolaus"],
+                korrekterIndex: 0
             }
         ];
 
@@ -202,6 +428,13 @@
             // Wenn alle Fragen durch sind, starte von vorn
             if (availableQuestionIndices.length === 0) {
                 availableQuestionIndices = Array.from({ length: allQuestions.length }, (_, i) => i);
+                
+                // Mische die Fragen-Indizes
+                for (let i = availableQuestionIndices.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [availableQuestionIndices[i], availableQuestionIndices[j]] = [availableQuestionIndices[j], availableQuestionIndices[i]];
+                }
+
                 if (allQuestions.length === 0) {
                      questionElement.textContent = "Fehler: Keine Fragen im Code gefunden!";
                      return;
@@ -215,11 +448,7 @@
             hintText.textContent = "Wähle eine Antwort oder drücke die **Leertaste** (Space), um die **Lösung** anzuzeigen.";
 
             // 2. Zufällige Frage wählen (ohne Wiederholung)
-            const randomListIndex = Math.floor(Math.random() * availableQuestionIndices.length);
-            const questionIndex = availableQuestionIndices[randomListIndex];
-            
-            // Index aus der Liste entfernen
-            availableQuestionIndices.splice(randomListIndex, 1);
+            const questionIndex = availableQuestionIndices.pop(); // Nehme den letzten Index aus der gemischten Liste
 
             currentQuizData = allQuestions[questionIndex];
 
